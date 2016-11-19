@@ -10,7 +10,7 @@ exports.api_call = function(path, f, body, method) {
         path : path,
         method : method,
         body: body,
-        headers: {'user-agent': config.username, 'Authorization': 'token ' + config.token }
+        headers: {'user-agent': "rustaceans.org-init", 'Authorization': 'token ' + config.token }
     };
 
     var request = https.request(opts, function(response) {
