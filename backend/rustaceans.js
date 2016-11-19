@@ -39,7 +39,7 @@ http.createServer(function (req, res) {
         });
     } else if (pathname =='/random') {
         // Return a random rustacean.
-        make_random_user(function (username) { get_user(username, res) } );
+        make_random_user(res, function (res, username) { get_user(username, res) } );
     } else {
         res.writeHead(404, {"Content-Type": "text/plain"});
         res.write("404 Not Found\n");
@@ -59,7 +59,7 @@ function get_channels(username, res, db, callback) {
     });
 }
 
-function make_random_user(mkusr) {
+function make_random_user(res, mkusr) {
     var db = new sqlite.Database("rustaceans.db");
     db.all('SELECT username FROM people;', function(err, rows) {
         if (err) {
@@ -69,7 +69,7 @@ function make_random_user(mkusr) {
         }
 
         if (!rows) {
-            console.log("no resuls while looking up usernames: " + err);
+            console.log("no results while looking up usernames: " + err);
             make_response(res, [], db);
             return;
         }

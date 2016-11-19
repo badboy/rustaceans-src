@@ -132,7 +132,7 @@ function insert_to_db(user_info, callback) {
         }
 
         db.run(strings, values, err_handler);
-    
+
         // irc channels go into a separate table
         var irc_string = 'INSERT INTO people_channels (person, channel) VALUES (?, ?);'
         var channels = user_info['irc_channels'];
