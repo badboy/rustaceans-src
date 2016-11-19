@@ -49,7 +49,7 @@ Rustaceans.SearchRoute = Ember.Route.extend({
 
 Rustaceans.SpeakerRoute = Ember.Route.extend({
   model: function(params) {
-    return jQuery.getJSON('http://localhost:2345/speaker?for=' + params.needle).then(function(res) {
+    return jQuery.getJSON(API_URL + '/speaker?for=' + params.needle).then(function(res) {
       return { results: res };
     });
   }
