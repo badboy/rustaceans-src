@@ -72,7 +72,8 @@ var fields = [
     ["twitter", true],
     ["blog", true],
     ["website", true],
-    ["notes", true]
+    ["notes", true],
+    ["speaker", true],
 ];
 
 function insert_to_db(user_info, callback) {

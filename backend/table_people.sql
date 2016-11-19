@@ -1,0 +1,16 @@
+CREATE TABLE people(username STRING PRIMARY KEY,
+  name STRING,
+  irc STRING,
+  show_avatar BOOL,
+  email STRING,
+  discourse STRING,
+  reddit STRING,
+  twitter STRING,
+  blog STRING,
+  website STRING,
+  notes STRING,
+  blob STRING,
+  speaker BOOL DEFAULT false,
+  speaker_topics STRING,
+  location STRING
+)

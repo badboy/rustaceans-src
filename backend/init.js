@@ -11,6 +11,7 @@ var sqlite = require("sqlite3");
 var call = require('./call.js');
 var user_mod = require("./user.js");
 var config = require('./config.json');
+var fs = require('fs');
 
 
 var db = new sqlite.Database("rustaceans.db");
@@ -21,18 +22,8 @@ db.serialize(function() {
     db.run("DROP TABLE people_channels", err_handler);
 
     // Create tables.
-    db.run("CREATE TABLE people(username STRING PRIMARY KEY,\
-                                name STRING,\
-                                irc STRING,\
-                                show_avatar BOOL,\
-                                email STRING,\
-                                discourse STRING,\
-                                reddit STRING,\
-                                twitter STRING,\
-                                blog STRING,\
-                                website STRING,\
-                                notes STRING,\
-                                blob STRING)", err_handler);
+    var table_people = fs.readFileSync("table_people.sql", { encoding: "UTF-8" })
+    db.run(table_people, err_handler);
     db.run("CREATE TABLE people_channels(person STRING, channel STRING)", err_handler);
 
     // Fill the tables from the repo.

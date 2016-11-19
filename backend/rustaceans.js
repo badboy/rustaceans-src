@@ -144,7 +144,10 @@ var fields = [
     "twitter",
     "blog",
     "website",
-    "notes"
+    "notes",
+    "speaker",
+    "speaker_topics",
+    "location"
 ];
 
 
@@ -164,6 +167,14 @@ function make_user(user_row, channel_rows) {
         user['irc_channels'] = channel_rows.map(function(cr) { return cr.channel; });
     } else {
         user['irc_channels'] = [];
+    }
+
+    if (user_row.speaker == 't' || user_row.speaker == 1) {
+      user['speaker'] = true;
+    } else {
+      user['speaker'] = false;
+      delete user['speaker_topics'];
+      delete user['location'];
     }
     return user;
 }
