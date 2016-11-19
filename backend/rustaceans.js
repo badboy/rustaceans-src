@@ -61,21 +61,21 @@ function get_channels(username, res, db, callback) {
 
 function make_random_user(res, mkusr) {
     var db = new sqlite.Database("rustaceans.db");
-    db.all('SELECT username FROM people;', function(err, rows) {
+    db.get('SELECT username FROM people ORDER BY random() LIMIT 1;', function(err, user) {
         if (err) {
             console.log("an error occured while looking up usernames: " + err);
             make_response(res, [], db);
             return;
         }
 
-        if (!rows) {
+        if (!user) {
             console.log("no results while looking up usernames: " + err);
             make_response(res, [], db);
             return;
         }
 
-        var username = rows[Math.floor(Math.random() * rows.length)].username;
-        mkusr(username);
+        var username = user.username;
+        mkusr(res, username);
     });
 }
 
