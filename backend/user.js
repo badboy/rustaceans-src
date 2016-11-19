@@ -10,7 +10,7 @@ exports.process_user = function(user, pr_number, callback) {
     if (!callback) {
         callback = function() {};
     }
-    call.api_call(config.repo + '/contents/data/' + user + '.json', function(json) {
+    call.api_call('/repos/' + config.repo + '/contents/data/' + user + '.json', function(json) {
         if (!json || json.type == undefined) {
             // Remove the user from the db.
             insert_to_db({'username': user}, function() {
