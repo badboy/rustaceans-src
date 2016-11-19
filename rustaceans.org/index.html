@@ -41,6 +41,16 @@
     <div class="clear"></div>
     {{#if notes}}<div class="notesrow"><span class="notes">{{{notes}}}</span></div>{{/if}}
     </div>
+    {{#if speaker}}
+    <div class="searchresult" class="clear">
+      <div class="name"><span class="name">Willing to speak!</span></div>
+      {{#if speaker_topics}}<div class="row"><span class="key">topics</span><span class="value">{{speaker_topics}}</span></div>{{/if}}
+      {{#if location}}<div class="row"><span class="key">location</span><span class="value">{{location}}</span></div>{{/if}}
+
+      {{#if username}}<div class="row"><span class="key">contact on</span><span class="value"><a href="https://github.com/rust-community/talks/issues/new?title=[Speaker%20Request]%20&body=Hey+@{{unbound username}}">github</a></span></div>{{/if}}
+      {{#if discourse}}<div class="row"><span class="key">contact on</span><span class="value"><a href="https://users.rust-lang.org/users/{{unbound discourse}}/">discourse</a></span></div>{{/if}}
+    </div>
+    {{/if}}
     {{/each}}
 
     {{partial "search_box"}}
