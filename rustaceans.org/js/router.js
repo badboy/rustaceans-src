@@ -14,6 +14,10 @@ Rustaceans.Router.map(function() {
 });
 
 Rustaceans.Router.map(function() {
+  this.route('speaker', { path: 'speaker/:needle' });
+});
+
+Rustaceans.Router.map(function() {
   this.resource('random', { path: '/random' });
 });
 
@@ -43,11 +47,21 @@ Rustaceans.SearchRoute = Ember.Route.extend({
   }
 });
 
+Rustaceans.SpeakerRoute = Ember.Route.extend({
+  model: function(params) {
+    return jQuery.getJSON('http://localhost:2345/speaker?for=' + params.needle).then(function(res) {
+      return { results: res };
+    });
+  }
+});
 
 Rustaceans.ApplicationRoute = Ember.Route.extend({
   actions: {
     search: function(val) {
       this.transitionTo('search', val);
+    },
+    speaker: function(val) {
+      this.transitionTo('speaker', val);
     }
   }
 });

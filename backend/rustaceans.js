@@ -20,6 +20,8 @@ http.createServer(function (req, res) {
         get_user(parsed_url.query['username'], res);
     } else if (pathname == '/search') {
         search(parsed_url.query['for'] , res);
+    } else if (pathname == '/speaker') {
+        speaker_search(parsed_url.query['for'] , res);
     } else if (pathname == '/pr') {
         // Get payload and parse it
         var body = '';
@@ -83,6 +85,33 @@ function make_random_user(res, mkusr) {
 function search(search_str, res) {
     var db = new sqlite.Database("rustaceans.db");
     db.all("SELECT * FROM people WHERE blob LIKE ?", "%" + search_str + "%", function(err, rows) {
+        if (err) {
+            console.log("an error occured while searching for '" + search_str + "': " + err);
+            make_response(res, [], db);
+            return;
+        }
+
+        // This nasty bit of callback hell is for finding each users irc channels.
+        // For each user we look up the channels from the DB, then create the user object.
+        // Once we have all the user objects in an array, then we put them in the repsonse.
+        async.parallel(rows.map(function(row) {
+            return function(callback) {
+                get_channels(row.username, res, db, function(rows) {
+                    callback(null, make_user(row, rows));
+                })
+            };
+        }),
+        function(err, result) {
+            make_response(res, result, db);
+        });
+    });
+}
+//
+// Search for speakers, returns a possibly empty array of user json objects.
+function speaker_search(search_str, res) {
+    var db = new sqlite.Database("rustaceans.db");
+    var search_str = "%" + search_str + "%";
+    db.all("SELECT * FROM people WHERE speaker = 1 AND (blob LIKE ? OR speaker_topics LIKE ?)", search_str, search_str, function(err, rows) {
         if (err) {
             console.log("an error occured while searching for '" + search_str + "': " + err);
             make_response(res, [], db);

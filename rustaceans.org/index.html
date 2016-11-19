@@ -23,6 +23,14 @@
     {{input type="text" placeholder="search" action="search" on="enter" class="searchbox"}}
     </p>
     <p class="searchnotes">(by name, irc nick, username for Reddit, GitHub, Discourse, etc.)</p>
+    <p class="searchnotes">Looking for a speaker? <a href="#speaker-search">Search here.</a></p>
+</script>
+
+<script type="text/x-handlebars" data-template-name="_speaker_search_box">
+    <p class="pitch">
+        Search for a Rust speaker:
+    {{input type="text" placeholder="speaker" action="speaker" on="enter" class="searchbox"}}
+    </p>
 </script>
 
 <script type="text/x-handlebars" data-template-name="_results">
@@ -61,6 +69,10 @@
 </script>
 
 <script type="text/x-handlebars" data-template-name="search">
+{{partial "results"}}
+</script>
+
+<script type="text/x-handlebars" data-template-name="speaker">
 {{partial "results"}}
 </script>
 
@@ -121,6 +133,8 @@
             </li>
         </ul>
     </p>
+
+    <div id="speaker-search" class="headsearch">{{partial "speaker_search_box"}}</div>
 </script>
 
 </body>

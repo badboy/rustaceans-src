@@ -22,7 +22,7 @@ db.serialize(function() {
     db.run("DROP TABLE people_channels", err_handler);
 
     // Create tables.
-    var table_people = fs.readFileSync("table_people.sql", { encoding: "UTF-8" })
+    var table_people = fs.readFileSync("table_people.sql", { encoding: "UTF-8" });
     db.run(table_people, err_handler);
     db.run("CREATE TABLE people_channels(person STRING, channel STRING)", err_handler);
 
