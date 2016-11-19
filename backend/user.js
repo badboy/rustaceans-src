@@ -53,7 +53,9 @@ exports.process_user = function(user, pr_number, callback) {
 
 exports.process_many = function(users) {
     if (users.length > 0) {
-        exports.process_user(users[0], null, exports.process_many(users.slice(1)));
+        exports.process_user(users[0], null, function() {
+            exports.process_many(users.slice(1))
+        });
     }
 }
 
