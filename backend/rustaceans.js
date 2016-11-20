@@ -111,7 +111,7 @@ function search(search_str, res) {
 function speaker_search(search_str, res) {
     var db = new sqlite.Database("rustaceans.db");
     var search_str = "%" + search_str + "%";
-    db.all("SELECT * FROM people WHERE speaker = 1 AND (blob LIKE ? OR speaker_topics LIKE ?)", search_str, search_str, function(err, rows) {
+    db.all("SELECT * FROM people WHERE speaker = 1 AND (blob LIKE ? OR speaker_topics LIKE ? OR location LIKE ?)", search_str, search_str, search_str, function(err, rows) {
         if (err) {
             console.log("an error occured while searching for '" + search_str + "': " + err);
             make_response(res, [], db);
