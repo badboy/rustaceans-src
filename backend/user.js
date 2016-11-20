@@ -74,6 +74,8 @@ var fields = [
     ["website", true],
     ["notes", true],
     ["speaker", true],
+    ["speaker_topics", true],
+    ["location", true]
 ];
 
 function insert_to_db(user_info, callback) {
