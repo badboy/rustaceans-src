@@ -10,7 +10,7 @@ exports.process_user = function(user, pr_number, callback) {
     if (!callback) {
         callback = function() {};
     }
-    call.api_call(config.repo + '/contents/data/' + user + '.json', function(json) {
+    call.api_call('/repos/' + config.repo + '/contents/data/' + user + '.json', function(json) {
         if (!json || json.type == undefined) {
             // Remove the user from the db.
             insert_to_db({'username': user}, function() {
@@ -53,7 +53,9 @@ exports.process_user = function(user, pr_number, callback) {
 
 exports.process_many = function(users) {
     if (users.length > 0) {
-        exports.process_user(users[0], null, exports.process_many(users.slice(1)));
+        exports.process_user(users[0], null, function() {
+            exports.process_many(users.slice(1))
+        });
     }
 }
 
@@ -70,7 +72,10 @@ var fields = [
     ["twitter", true],
     ["blog", true],
     ["website", true],
-    ["notes", true]
+    ["notes", true],
+    ["speaker", true],
+    ["speaker_topics", true],
+    ["location", true]
 ];
 
 function insert_to_db(user_info, callback) {
@@ -130,7 +135,7 @@ function insert_to_db(user_info, callback) {
         }
 
         db.run(strings, values, err_handler);
-    
+
         // irc channels go into a separate table
         var irc_string = 'INSERT INTO people_channels (person, channel) VALUES (?, ?);'
         var channels = user_info['irc_channels'];

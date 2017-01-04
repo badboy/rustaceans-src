@@ -23,6 +23,15 @@
     {{input type="text" placeholder="search" action="search" on="enter" class="searchbox"}}
     </p>
     <p class="searchnotes">(by name, irc nick, username for Reddit, GitHub, Discourse, etc.)</p>
+    <p class="searchnotes">Looking for a speaker? <a href="#speaker-search">Search here.</a></p>
+</script>
+
+<script type="text/x-handlebars" data-template-name="_speaker_search_box">
+    <p class="pitch">
+        Search for a Rust speaker:
+    {{input type="text" placeholder="speaker" action="speaker" on="enter" class="searchbox"}}
+    </p>
+    <p class="searchnotes">(by name, topic or location)</p>
 </script>
 
 <script type="text/x-handlebars" data-template-name="_results">
@@ -32,7 +41,7 @@
     {{#if name}}<div class="name"><span class="name">{{#link-to 'people' username}}{{name}}{{/link-to}}</span></div>{{/if}}
     <div class="row"><span class="key">GitHub username</span><span class="value"><a href="https://github.com/{{unbound username}}">{{username}}</a></span></div>
     {{#if irc}}<div class="row"><span class="key">irc nick</span><span class="value"><span class="irc-nick">{{irc}}</span>{{#if irc_channels}} on {{#each irc_channels}} <a href="irc://moznet/{{unbound this}}">#{{this}}</a> {{/each}}{{/if}}</span></div>{{/if}}
-    {{#if discourse}}<div class="row"><span class="key">discourse username</span><span class="value"><a href="http://discuss.rust-lang.org/users/{{unbound discourse}}">{{discourse}}</a></span></div>{{/if}}
+    {{#if discourse}}<div class="row"><span class="key">discourse username</span><span class="value"><a href="http://users.rust-lang.org/users/{{unbound discourse}}">{{discourse}}</a></span></div>{{/if}}
     {{#if reddit}}<div class="row"><span class="key">reddit username</span><span class="value"><a href="http://www.reddit.com/user/{{unbound reddit}}">{{reddit}}</a></span></div>{{/if}}
     {{#if twitter}}<div class="row"><span class="key">twitter username</span><span class="value"><a href="https://twitter.com/{{unbound twitter}}">{{twitter}}</a></span></div>{{/if}}
     {{#if website}}<div class="row"><span class="key">website</span><span class="value"><a href="{{unbound website}}">{{website}}</a></span></div>{{/if}}
@@ -41,6 +50,18 @@
     <div class="clear"></div>
     {{#if notes}}<div class="notesrow"><span class="notes">{{{notes}}}</span></div>{{/if}}
     </div>
+    {{#if speaker}}
+    <div class="searchresult" class="clear">
+      <div class="name"><span class="name">Willing to speak!</span></div>
+      {{#if speaker_topics}}<div class="row"><span class="key">topics</span><span class="value">{{speaker_topics}}</span></div>{{/if}}
+      {{#if location}}<div class="row"><span class="key">location</span><span class="value">{{location}}</span></div>{{/if}}
+
+      {{#if username}}<div class="row"><span class="key">contact on</span><span class="value"><a href="https://github.com/rust-community/talks/issues/new?title=[Speaker%20Request]%20&body=Hey+@{{unbound username}}">github</a></span></div>{{/if}}
+      {{#if discourse}}<div class="row"><span class="key">contact on</span><span class="value"><a href="https://users.rust-lang.org/users/{{unbound discourse}}/">discourse</a></span></div>{{/if}}
+      <br>
+      <p class="searchnotes">In order to contact the Rustacean, please open an issue or sent a DM on users.rust-lang.org</p>
+    </div>
+    {{/if}}
     {{/each}}
 
     {{partial "search_box"}}
@@ -51,6 +72,10 @@
 </script>
 
 <script type="text/x-handlebars" data-template-name="search">
+{{partial "results"}}
+</script>
+
+<script type="text/x-handlebars" data-template-name="speaker">
 {{partial "results"}}
 </script>
 
@@ -91,11 +116,13 @@
             <li>IRC on Moznet:
             <ul>
             <li><a href="irc://moznet/rust">#rust</a> is for all things Rust;</li>
+            <li><a href="irc://moznet/rust-beginners">#rust-beginners</a> is for anyone who needs help learning Rust. There are no stupid questions!;</li>
+            <li><a href="irc://moznet/rust-community">#rust-community</a> is where the community team and Rust meetup organizers hang out;</li>
             <li><a href="irc://moznet/rust-internals">#rust-internals</a> is for discussion of other Rust implementation topics;</li>
             <li><a href="irc://moznet/rustc">#rustc</a> is for discussion of the implementation of the Rust compiler;</li>
             <li><a href="irc://moznet/rust-libs">#rust-lang</a> is for discussion of the design of the Rust language;</li>
             <li><a href="irc://moznet/rust-libs">#rust-libs</a> is for discussion of the implementation of the Rust standard libraries;</li>
-            <li><a href="irc://moznet/rust-libs">#rust-tools</a> is for discussion of Rust tools;</li>
+            <li><a href="irc://moznet/rust-tools">#rust-tools</a> is for discussion of Rust tools;</li>
             <li><a href="irc://moznet/rust-gamedev">#rust-gamedev</a> is for people doing game development in Rust;</li>
             <li><a href="irc://moznet/rust-crypto">#rust-crypto</a> is for discussion of cryptography in Rust;</li>
             <li><a href="irc://moznet/rust-osdev">#rust-osdev</a> is for people doing OS development in Rust;</li>
@@ -109,6 +136,8 @@
             </li>
         </ul>
     </p>
+
+    <div id="speaker-search" class="headsearch">{{partial "speaker_search_box"}}</div>
 </script>
 
 </body>

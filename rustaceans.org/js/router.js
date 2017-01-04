@@ -1,12 +1,20 @@
+var API_URL = 'http://www.ncameron.org/rustaceans';
+//var API_URL = 'http://localhost:2345';
+
 Rustaceans.Router.map(function() {
   this.resource('index', { path: '/' });
 });
+
 Rustaceans.Router.map(function() {
   this.resource('index', { path: '/index.html' });
 });
 
 Rustaceans.Router.map(function() {
   this.route('search', { path: 'search/:needle' });
+});
+
+Rustaceans.Router.map(function() {
+  this.route('speaker', { path: 'speaker/:needle' });
 });
 
 Rustaceans.Router.map(function() {
@@ -19,7 +27,7 @@ Rustaceans.Router.map(function() {
 
 Rustaceans.PeopleRoute = Ember.Route.extend({
   model: function(params) {
-    return jQuery.getJSON('http://www.ncameron.org/rustaceans/user?username=' + params.username).then(function(res) {
+    return jQuery.getJSON(API_URL + '/user?username=' + params.username).then(function(res) {
       return { results: res };
     });
   },
@@ -33,17 +41,27 @@ Rustaceans.PeopleRoute = Ember.Route.extend({
 
 Rustaceans.SearchRoute = Ember.Route.extend({
   model: function(params) {
-    return jQuery.getJSON('http://www.ncameron.org/rustaceans/search?for=' + params.needle).then(function(res) {
+    return jQuery.getJSON(API_URL + '/search?for=' + params.needle).then(function(res) {
       return { results: res };
     });
   }
 });
 
+Rustaceans.SpeakerRoute = Ember.Route.extend({
+  model: function(params) {
+    return jQuery.getJSON(API_URL + '/speaker?for=' + params.needle).then(function(res) {
+      return { results: res };
+    });
+  }
+});
 
 Rustaceans.ApplicationRoute = Ember.Route.extend({
   actions: {
     search: function(val) {
       this.transitionTo('search', val);
+    },
+    speaker: function(val) {
+      this.transitionTo('speaker', val);
     }
   }
 });
@@ -51,7 +69,7 @@ Rustaceans.ApplicationRoute = Ember.Route.extend({
 
 Rustaceans.RandomRoute = Ember.Route.extend({
   model: function(params) {
-    return jQuery.getJSON('http://www.ncameron.org/rustaceans/random').then(function(res) {
+    return jQuery.getJSON(API_URL + '/random').then(function(res) {
       return { results: res };
     });
   }

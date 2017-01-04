@@ -20,6 +20,8 @@ http.createServer(function (req, res) {
         get_user(parsed_url.query['username'], res);
     } else if (pathname == '/search') {
         search(parsed_url.query['for'] , res);
+    } else if (pathname == '/speaker') {
+        speaker_search(parsed_url.query['for'] , res);
     } else if (pathname == '/pr') {
         // Get payload and parse it
         var body = '';
@@ -39,7 +41,7 @@ http.createServer(function (req, res) {
         });
     } else if (pathname =='/random') {
         // Return a random rustacean.
-        make_random_user(function (username) { get_user(username, res) } );
+        make_random_user(res, function (res, username) { get_user(username, res) } );
     } else {
         res.writeHead(404, {"Content-Type": "text/plain"});
         res.write("404 Not Found\n");
@@ -59,23 +61,23 @@ function get_channels(username, res, db, callback) {
     });
 }
 
-function make_random_user(mkusr) {
+function make_random_user(res, mkusr) {
     var db = new sqlite.Database("rustaceans.db");
-    db.all('SELECT username FROM people;', function(err, rows) {
+    db.get('SELECT username FROM people ORDER BY random() LIMIT 1;', function(err, user) {
         if (err) {
             console.log("an error occured while looking up usernames: " + err);
             make_response(res, [], db);
             return;
         }
 
-        if (!rows) {
-            console.log("no resuls while looking up usernames: " + err);
+        if (!user) {
+            console.log("no results while looking up usernames: " + err);
             make_response(res, [], db);
             return;
         }
 
-        var username = rows[Math.floor(Math.random() * rows.length)].username;
-        mkusr(username);
+        var username = user.username;
+        mkusr(res, username);
     });
 }
 
@@ -83,6 +85,33 @@ function make_random_user(mkusr) {
 function search(search_str, res) {
     var db = new sqlite.Database("rustaceans.db");
     db.all("SELECT * FROM people WHERE blob LIKE ?", "%" + search_str + "%", function(err, rows) {
+        if (err) {
+            console.log("an error occured while searching for '" + search_str + "': " + err);
+            make_response(res, [], db);
+            return;
+        }
+
+        // This nasty bit of callback hell is for finding each users irc channels.
+        // For each user we look up the channels from the DB, then create the user object.
+        // Once we have all the user objects in an array, then we put them in the repsonse.
+        async.parallel(rows.map(function(row) {
+            return function(callback) {
+                get_channels(row.username, res, db, function(rows) {
+                    callback(null, make_user(row, rows));
+                })
+            };
+        }),
+        function(err, result) {
+            make_response(res, result, db);
+        });
+    });
+}
+//
+// Search for speakers, returns a possibly empty array of user json objects.
+function speaker_search(search_str, res) {
+    var db = new sqlite.Database("rustaceans.db");
+    var search_str = "%" + search_str + "%";
+    db.all("SELECT * FROM people WHERE speaker = 1 AND (blob LIKE ? OR speaker_topics LIKE ? OR location LIKE ?)", search_str, search_str, search_str, function(err, rows) {
         if (err) {
             console.log("an error occured while searching for '" + search_str + "': " + err);
             make_response(res, [], db);
@@ -144,7 +173,10 @@ var fields = [
     "twitter",
     "blog",
     "website",
-    "notes"
+    "notes",
+    "speaker",
+    "speaker_topics",
+    "location"
 ];
 
 
@@ -164,6 +196,14 @@ function make_user(user_row, channel_rows) {
         user['irc_channels'] = channel_rows.map(function(cr) { return cr.channel; });
     } else {
         user['irc_channels'] = [];
+    }
+
+    if (user_row.speaker == 't' || user_row.speaker == 1) {
+      user['speaker'] = true;
+    } else {
+      user['speaker'] = false;
+      delete user['speaker_topics'];
+      delete user['location'];
     }
     return user;
 }
